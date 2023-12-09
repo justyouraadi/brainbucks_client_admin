@@ -1,0 +1,15 @@
+.css-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.datep{
+    background-color: #F5F5F5;
+    /* width: 130px; */
+    font-size: 15px;
+    outline: none;
+    border-radius: 5px;
+    
+  
+  }
