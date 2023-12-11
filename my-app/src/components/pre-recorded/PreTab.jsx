@@ -6,6 +6,7 @@ import Modal from "react-bootstrap/Modal";
 import ProgressBar from "@ramonak/react-progress-bar";
 import Quizzes from "./Quizzes";
 import AddQuiz from "./AddQuiz";
+import Details from "./Details";
 
 const PreTab = () => {
   const [show, setShow] = useState(false);
@@ -396,6 +397,34 @@ const PreTab = () => {
       </Offcanvas>
                 {/* add quizzes offcavnas end  */}
 
+              </>
+            ) : (
+              <></>
+            )}
+            {tabs === 2 ? (
+              <>
+                {/* <div className="d-flex justify-content-end align-items-end">
+                  <button
+                    className="py-1 px-2 bg-transparent d-none"
+                    style={{
+                      borderRadius: "5px",
+                      color: "#2C62EE",
+                      border: "1px solid #2C62EE",
+                      fontSize: "0.9rem",
+                      fontWeight: 700,
+                    }}
+                    // onClick={handleShow1}
+                  >
+                    + view something
+                  </button>
+                </div> */}
+
+                <div
+                  className="mt-2 example"
+                  style={{ height: "68vh", overflowY: "scroll" }}
+                >
+                  <Details />
+                </div>
               </>
             ) : (
               <></>

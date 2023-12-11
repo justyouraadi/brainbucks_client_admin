@@ -5,11 +5,13 @@ import InputAdornment from "@mui/material/InputAdornment";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const Navigate = useNavigate();
 
   const handlePasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -88,14 +90,14 @@ const Login = () => {
                   }}
             />
             <Button
-              // onClick={signUp}
+              onClick={()=>Navigate('/PreRecorded')}
               className="py-3 mt-4"
               style={{background:"linear-gradient(180deg, #0575E6 0%, #02298A 84.79%, #021B79 100%)"}}
               sx={{ py: 2 }}
               variant="contained"
               fullWidth={true}
             >
-              SignUp
+              Login
             </Button>
             </div>
             </div>

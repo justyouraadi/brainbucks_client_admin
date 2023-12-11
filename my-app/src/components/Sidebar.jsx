@@ -1,6 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
+  const Navigate = useNavigate();
   return (
     <>
       <div className="h-100 w-100" style={{ border: "1px solid #E4E4E4" }}>
@@ -49,6 +51,7 @@ const Sidebar = () => {
         </div>
         <div style={{ height: "10%" }} className="d-flex align-items-center p-3" >
         <div
+        onClick={()=>Navigate('/')}
             className="d-flex justify-content-center align-items-center w-100 gap-3 py-3"
             style={{
               background: "#FFEFEF",
