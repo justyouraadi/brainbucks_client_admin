@@ -937,14 +937,12 @@ const AddQuiz = ({handleClose2}) => {
                               {data.course}
                             </span>
                           </p>
-                          <hr />
                           <p style={{ color: "#434343" }}>
                             Subject :{" "}
                             <span style={{ fontWeight: 800 }}>
                               {data.subject}
                             </span>
                           </p>
-                          <hr />
                           <p style={{ color: "#434343" }}>
                             Number of Questions :{" "}
                             <span style={{ fontWeight: 800 }}>
