@@ -1,8 +1,45 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import {token,base_url} from "./env"
+import toast, { Toaster } from "react-hot-toast";
 
 const Sidebar = () => {
   const Navigate = useNavigate();
+  const logOutApi = async()=>{
+    try{
+      var myHeaders = new Headers();
+myHeaders.append("Authorization", `${token}`);
+
+var requestOptions = {
+  method: 'GET',
+  headers: myHeaders,
+  redirect: 'follow'
+};
+
+fetch(`${base_url}/admin/authentication/logout`, requestOptions)
+  .then(response => response.json())
+  .then(result => {
+    if(result.status==1){
+      localStorage.removeItem("brainbucks_token");
+      localStorage.removeItem("userName");
+      Navigate('/');
+    }
+    else if (result.status === 'VAL_ERR') { 
+      toast(result.Backend_Error) 
+    } 
+    else if (result.status == "TOKEN_ERR") { 
+      localStorage.removeItem('brainbucks_token'); 
+      Navigate('/') 
+      toast.error("Logged in other device! Please login again") 
+    } else { 
+      console.log(result) 
+    }
+  })
+  .catch(error => console.log('error', error));
+    }catch(e){
+      console.log(e)
+    }
+  }
   return (
     <>
       <div className="h-100 w-100" style={{ border: "1px solid #E4E4E4" }}>
@@ -51,7 +88,7 @@ const Sidebar = () => {
         </div>
         <div style={{ height: "10%" }} className="d-flex align-items-center p-3" >
         <div
-        onClick={()=>Navigate('/')}
+        onClick={logOutApi}
             className="d-flex justify-content-center align-items-center w-100 gap-3 py-3"
             style={{
               background: "#FFEFEF",
@@ -70,6 +107,7 @@ const Sidebar = () => {
           </div>
         </div>
       </div>
+      <Toaster position="top-right" />
     </>
   );
 };

@@ -6,12 +6,54 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import {base_url} from ".././env"
+import toast, { Toaster } from "react-hot-toast";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const Navigate = useNavigate();
+
+  const loginApi = async()=>{
+    try{
+      var myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/json");
+
+var raw = JSON.stringify({
+  "email": email,
+  "password": password
+});
+
+var requestOptions = {
+  method: 'POST',
+  headers: myHeaders,
+  body: raw,
+  redirect: 'follow'
+};
+
+fetch(`${base_url}/admin/authentication/login`, requestOptions)
+  .then(response => response.json())
+  .then(result => {
+    if(result.status==1){
+      localStorage.setItem("brainbucks_token",result.token);
+      localStorage.setItem("username",result.userName);
+      Navigate('/PreRecorded');
+    }
+    else if (result.status == "CUSTOM_ERR") { 
+      toast.error(result.Backend_Error); }
+    else if (result.status === 'VAL_ERR') { 
+      toast.error(result.Backend_Error) 
+    } 
+    else { 
+      console.log(result) 
+    }
+  })
+  .catch(error => console.log('error', error));
+    }catch(e){
+      console.log(e)
+    }
+  }
 
   const handlePasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -90,7 +132,15 @@ const Login = () => {
                   }}
             />
             <Button
-              onClick={()=>Navigate('/PreRecorded')}
+             onClick={() => {
+                if (email <= 0) {
+                  toast.error("pls enter email");
+                } else if (password <= 0) {
+                  toast.error("pls enter password");
+                } else {
+                  loginApi();
+                }
+              }}
               className="py-3 mt-4"
               style={{background:"linear-gradient(180deg, #0575E6 0%, #02298A 84.79%, #021B79 100%)"}}
               sx={{ py: 2 }}
@@ -104,6 +154,8 @@ const Login = () => {
           </div>
         </div>
       </div>
+
+      <Toaster position="top-right" />
     </>
   );
 };
