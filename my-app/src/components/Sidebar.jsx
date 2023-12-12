@@ -16,12 +16,12 @@ var requestOptions = {
   redirect: 'follow'
 };
 
-fetch(`${base_url}/admin/authentication/logout`, requestOptions)
+fetch(`${base_url}/auth/admin/authentication/logout`, requestOptions)
   .then(response => response.json())
   .then(result => {
     if(result.status==1){
       localStorage.removeItem("brainbucks_token");
-      localStorage.removeItem("userName");
+      localStorage.removeItem("username");
       Navigate('/');
     }
     else if (result.status === 'VAL_ERR') { 

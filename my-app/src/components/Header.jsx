@@ -2,13 +2,14 @@ import React from "react";
 // import Nav from 'react-bootstrap/Nav';
 // import Navbar from 'react-bootstrap/Navbar';
 // import NavDropdown from 'react-bootstrap/NavDropdown';
+import {username} from "./env"
 
 const Header = () => {
   return (
     <>
       <div className="d-flex justify-content-between align-items-center h-100 px-3">
         <div>
-            <h1 className="mb-0" style={{fontSize:"1.2rem",fontWeight:600,color:"#fff"}} >Hii, Devendra</h1>
+            <h1 className="mb-0" style={{fontSize:"1.2rem",fontWeight:600,color:"#fff"}} >Hii, {username}</h1>
         </div>
         <div className="d-flex gap-3 align-items-center" >
             <div style={{background:"#3d70f5",borderRadius:"50px",cursor:"pointer"}} className="p-2" >

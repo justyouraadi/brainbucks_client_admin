@@ -32,7 +32,7 @@ var requestOptions = {
   redirect: 'follow'
 };
 
-fetch(`${base_url}/admin/authentication/login`, requestOptions)
+fetch(`${base_url}/auth/admin/authentication/login`, requestOptions)
   .then(response => response.json())
   .then(result => {
     if(result.status==1){
