@@ -8,7 +8,7 @@ const Sidebar = () => {
   const logOutApi = async()=>{
     try{
       var myHeaders = new Headers();
-myHeaders.append("Authorization", `${token}`);
+myHeaders.append("Authorization", `Bearer ${token}`);
 
 var requestOptions = {
   method: 'GET',
@@ -27,11 +27,12 @@ fetch(`${base_url}/auth/admin/authentication/logout`, requestOptions)
     else if (result.status === 'VAL_ERR') { 
       toast(result.Backend_Error) 
     } 
-    else if (result.status == "TOKEN_ERR") { 
-      localStorage.removeItem('brainbucks_token'); 
-      Navigate('/') 
-      toast.error("Logged in other device! Please login again") 
-    } else { 
+    // else if (result.status == "TOKEN_ERR") { 
+    //   localStorage.removeItem('brainbucks_token'); 
+    //   Navigate('/') 
+    //   toast.error("Logged in other device! Please login again") 
+    // }
+     else { 
       console.log(result) 
     }
   })
