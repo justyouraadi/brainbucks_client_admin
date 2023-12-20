@@ -9,9 +9,10 @@ import AddQuiz from "./AddQuiz";
 import Details from "./Details";
 import {token,base_url} from "../env"
 import toast, { Toaster } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const PreTab = () => {
-  const Navigate = useState();
+  const Navigate = useNavigate();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   // const handleShow = () => setShow(true);
@@ -51,10 +52,11 @@ var requestOptions = {
 
 fetch(`${base_url}/prerec/prerecordedcourse/get/pre/rec/cou`, requestOptions)
   .then(response => response.json())
-  .then(result => {
+  .then((result) => {
     if(result.status==1){
       setCardData(result.data);
-    }else if (result.status == "TOKEN_ERR") {
+    }
+    else if (result.status == "TOKEN_ERR") {
       localStorage.removeItem("brainbucks_token");
       localStorage.removeItem("username");
       Navigate("/");
@@ -123,11 +125,13 @@ fetch(`${base_url}/prerec/prerecordedcourse/get/pre/rec/cou`, requestOptions)
             setSelectedVideo("");
             setVideoTitle("");
             setProgress(0);
-          }else if (result.status == "TOKEN_ERR") {
+          }
+          else if (result.status == "TOKEN_ERR") {
             localStorage.removeItem("brainbucks_token");
             localStorage.removeItem("username");
             Navigate("/");
-          } else if (result.status == 'FILE_ERR') { 
+          } 
+          else if (result.status == 'FILE_ERR') { 
             toast.error(result.Backend_Error) 
           } 
         })

@@ -42,7 +42,7 @@ fetch(`${base_url}/auth/admin/authentication/login`, requestOptions)
     }
     else if (result.status == "CUSTOM_ERR") { 
       toast.error(result.Backend_Error); }
-    else if (result.status === 'VAL_ERR') { 
+    else if (result.status == 'VAL_ERR') { 
       toast.error(result.Backend_Error) 
     } 
     else { 
