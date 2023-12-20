@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { InfinitySpin } from "react-loader-spinner";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import Content from "./Content";
@@ -7,11 +7,14 @@ import ProgressBar from "@ramonak/react-progress-bar";
 import Quizzes from "./Quizzes";
 import AddQuiz from "./AddQuiz";
 import Details from "./Details";
+import {token,base_url} from "../env"
+import toast, { Toaster } from "react-hot-toast";
 
 const PreTab = () => {
+  const Navigate = useState();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  // const handleShow = () => setShow(true);
 
   const [show1, setShow1] = useState(false);
   const handleClose1 = () => setShow1(false);
@@ -24,52 +27,46 @@ const PreTab = () => {
   const [tabs, setTabs] = useState(0);
   const [progress, setProgress] = useState(0);
   const [videoTitle, setVideoTitle] = useState("");
+  const [cardData,setCardData] = useState([]);
+  
+  const [selectedCardId, setSelectedCardId] = useState(null);
 
+  const [selectedVideo,setSelectedVideo]=useState("");
+  const [selectedVideoTitle,setSelectedVideoTitle]=useState("");
+  const handleShow = (cardId) => {
+    setSelectedCardId(cardId);
+    setShow(true);
+  };
 
-  const cardData = [
-    {
-      image: require("../../assets/pre-record-card-image.svg").default,
-      duration: "3 Years",
-      assignments: 576,
-      upto: "Upto 25 LPA",
-      price: "25,0000",
-    },
-    {
-      image: require("../../assets/pre-record-card-image.svg").default,
-      duration: "3 Years",
-      assignments: 576,
-      upto: "Upto 25 LPA",
-      price: "25,0000",
-    },
-    {
-      image: require("../../assets/pre-record-card-image.svg").default,
-      duration: "3 Years",
-      assignments: 576,
-      upto: "Upto 25 LPA",
-      price: "25,0000",
-    },
-    {
-      image: require("../../assets/pre-record-card-image.svg").default,
-      duration: "3 Years",
-      assignments: 576,
-      upto: "Upto 25 LPA",
-      price: "25,0000",
-    },
-    {
-      image: require("../../assets/pre-record-card-image.svg").default,
-      duration: "3 Years",
-      assignments: 576,
-      upto: "Upto 25 LPA",
-      price: "25,0000",
-    },
-    {
-      image: require("../../assets/pre-record-card-image.svg").default,
-      duration: "3 Years",
-      assignments: 576,
-      upto: "Upto 25 LPA",
-      price: "25,0000",
-    },
-  ];
+  const getCourses = async()=>{
+    try {
+      var myHeaders = new Headers();
+myHeaders.append("Authorization", `Bearer ${token}`);
+
+var requestOptions = {
+  method: 'POST',
+  headers: myHeaders,
+  redirect: 'follow'
+};
+
+fetch(`${base_url}/prerec/prerecordedcourse/get/pre/rec/cou`, requestOptions)
+  .then(response => response.json())
+  .then(result => {
+    if(result.status==1){
+      setCardData(result.data);
+    }else if (result.status == "TOKEN_ERR") {
+      localStorage.removeItem("brainbucks_token");
+      localStorage.removeItem("username");
+      Navigate("/");
+    }
+  })
+  .catch(error => console.log('error', error));
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  
 
   const fileInputRef = useRef(null);
 
@@ -83,52 +80,91 @@ const PreTab = () => {
 
     try {
       setProgress(1);
-      setVideoTitle("");
+      // setVideoTitle("");
+      setSelectedVideoTitle("")
 
-      // Simulating a delay for the file upload process
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
       setProgress(100);
-      setVideoTitle(selectedFile.name);
+      // setVideoTitle(selectedFile.name);
+      setSelectedVideoTitle(selectedFile.name)
+      setSelectedVideo(selectedFile)
 
       console.log("File uploaded:", selectedFile);
     } catch (error) {
       console.error("Error uploading file:", error);
-      // Handle error if needed
     }
   };
 
+
+  const addCourse = async()=>{
+    try{
+      var myHeaders = new Headers();
+      myHeaders.append("Authorization", `Bearer ${token}`);
+      
+      var formdata = new FormData();
+      formdata.append("title", videoTitle);
+      formdata.append("prerec_cou_id", selectedCardId);
+      formdata.append("video", selectedVideo);
+      
+      var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: formdata,
+        redirect: 'follow'
+      };
+      
+      fetch(`${base_url}/prerec/prerecordedcourse/upload/vedio/in/pre/rec/cou`, requestOptions)
+        .then(response => response.json())
+        .then(result => {
+          if(result.status==1){
+            // getCourses();
+            toast.success(result.msg);
+            setSelectedVideo("");
+            setVideoTitle("");
+            setProgress(0);
+          }else if (result.status == "TOKEN_ERR") {
+            localStorage.removeItem("brainbucks_token");
+            localStorage.removeItem("username");
+            Navigate("/");
+          } else if (result.status == 'FILE_ERR') { 
+            toast.error(result.Backend_Error) 
+          } 
+        })
+        .catch(error => console.log('error', error));
+    }catch(e){
+      console.log(e)
+    }
+  }
+
+
+  useEffect(() => {
+    getCourses();
+  }, [])
+  
   return (
     <>
       <div className="container-fluid pb-4">
         <div className="row row-gap-4">
-          {cardData.length <= 0 ? (
+          {cardData <= 0 ? (
             <div className="col-6 text-center w-100 mx-auto">
               <InfinitySpin width="300" color="#3D70F5" />
             </div>
           ) : (
-            cardData.map((data, value) => (
+            cardData?.slice().reverse().map((data, value) => (
               <div className="col-4" key={value}>
                 <div className="card h-100">
-                  <img src={data.image} alt="something" className="w-100" />
+                  <img src={data.banner} alt="something" className="w-100" style={{objectFit:"cover",height:"200px",objectPosition:"center center"}} />
                   <div className="px-2 mt-1">
-                    <div className="d-flex align-items-center justify-content-between">
-                      <p style={{ fontSize: "0.74681rem", color: "#000" }}>
-                        Duration: {data.duration}
+                  <p className="mb-0" style={{ fontSize: "1.3rem", fontWeight: 700 }}>
+                        {data.cou_name}
                       </p>
-                      <p style={{ fontSize: "0.74681rem", color: "#000" }}>
-                        Assignments: {data.assignments}
-                      </p>
-                      <p style={{ fontSize: "0.74681rem", color: "#000" }}>
-                        {data.upto}
-                      </p>
-                    </div>
-                    <p style={{ fontSize: "1.3rem", fontWeight: 700 }}>
-                      Price: ₹ {data.price}
+                    <p className="mb-0" style={{ fontSize: "1.3rem", fontWeight: 700 }}>
+                    {data.total_amount}
                     </p>
                     <div className="my-3">
                       <button
-                        onClick={handleShow}
+                        onClick={() => handleShow(data.id)}
                         className="btn py-2 w-100 text-white"
                         style={{ background: "#2C62EE" }}
                       >
@@ -200,6 +236,7 @@ const PreTab = () => {
           </Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
+        
           <div className="d-flex align-items-center gap-3">
             <span
               onClick={() => setTabs(0)}
@@ -259,7 +296,7 @@ const PreTab = () => {
                   className="mt-2 example"
                   style={{ height: "61vh", overflowY: "scroll" }}
                 >
-                  <Content />
+                  <Content currentCourseId={selectedCardId} />
                 </div>
 
                 {/* add video model started  */}
@@ -275,6 +312,7 @@ const PreTab = () => {
                             placeholder="Enter Title"
                             className="px-3 py-2 w-100 border-0"
                             style={{ borderRadius: "5px", background: "#eee" }}
+                            onChange={(e)=>setVideoTitle(e.target.value)}
                           />
                         </div>
                         <div className="col-12 mt-3">
@@ -348,7 +386,17 @@ const PreTab = () => {
                     <button
                       className="btn border-0  py-2 text-white w-50"
                       style={{ background: "#3D70F5" }}
-                      onClick={handleClose1}
+                      disabled={progress < 100}
+                      onClick={()=>{
+                        if(videoTitle.length<=0){
+                          toast.error("pls enter title")
+                        }else if(selectedVideo.length<=0){
+                          toast.error("pls select video");
+                        }else{
+                          addCourse();
+                          handleClose1();
+                        }
+                      }}
                     >
                       Confirm
                     </button>
@@ -423,7 +471,7 @@ const PreTab = () => {
                   className="mt-2 example"
                   style={{ height: "68vh", overflowY: "scroll" }}
                 >
-                  <Details />
+                  <Details  currentCourseId={selectedCardId} />
                 </div>
               </>
             ) : (
@@ -433,6 +481,7 @@ const PreTab = () => {
         </Offcanvas.Body>
       </Offcanvas>
       {/* view course details offcanvas end  */}
+      <Toaster position="top-right" />
     </>
   );
 };
